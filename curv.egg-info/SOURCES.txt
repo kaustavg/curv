@@ -1,0 +1,14 @@
+MANIFEST.in
+README.rst
+setup.py
+curv/__init__.py
+curv/cvdistributions.py
+curv/cvoperations.py
+curv/cvplot.py
+curv/cvrv.py
+curv.egg-info/PKG-INFO
+curv.egg-info/SOURCES.txt
+curv.egg-info/dependency_links.txt
+curv.egg-info/not-zip-safe
+curv.egg-info/requires.txt
+curv.egg-info/top_level.txt

@@ -23,20 +23,6 @@ Typical usage often looks like this::
     A = cv.Normal(1,1)
     cv.pdplot(D,-10,10)
 
-
-** Table of Contents **
-1. Installation & Dependencies
-2. Usage
-	a. Creating a Bayesian Network
-	b. Performing Inference
-	c. Displaying Results
-3. Under the Hood
-	a. Characteristic Functions
-	b. Joint Probability Characteristic Functions
-	c. Computing and Plotting Results
-	d. Bayesian Inference
-
-
 Installation & Dependencies
 ===========================
 

@@ -25,16 +25,16 @@ Typical usage often looks like this::
 
  **Table of Contents** 
 
-- [Installation & Dependencies](#)
-- [Usage](#)
-	- [Creating a Bayesian Network](#)
-	- [Performing Inference](#)
-	- [Displaying Results](#)
-- [Under the Hood](#)
-	- [Characteristic Functions](#)
-	- [Joint Probability Characteristic Functions](#)
-	- [Computing and Plotting Results](#)
-	- [Bayesian Inference](#)
+- Installation & Dependencies
+- Usage
+	- Creating a Bayesian Network
+	- Performing Inference
+	- Displaying Results
+- Under the Hood
+	- Characteristic Functions
+	- Joint Probability Characteristic Functions
+	- Computing and Plotting Results
+	- Bayesian Inference
 
 
 Installation & Dependencies

@@ -70,9 +70,15 @@ Joint Probability Characteristic Functions
 
 Arithmetic Operations on Joint Characteristic Functions
 -------------------------------------------------------
+
+Addition of a Constant to a Continuous Random Variable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Our problem is to find the joint CHF :math:`\phi_{X,Y}(u,v)` as a function of :math:`\phi_X(u)` given :math:`Y = X + a` where :math:`a` is a constant.
+
 The addition of two chfs in a joint distribution can be accomplished without integration using central slice theorm. The result of a sum of two RVs in a joint chf will be a slice of the joint chf of the parents. 
 
-When forming the new joint chf, the slice will be placed along the new dimension in the negative direction. For example, if Z = X + Y then we first obtain the value of CHF(x,y) along the line y=x, then place those values in the new joint CHF(x,y,z) along the line x=y=-z. 
+When forming the new joint chf, the slice will be placed along the new dimension in the negative direction. For example, if :math:`\frac{ \sum_{t=0}^{N}f(t,k) }{N}` then we first obtain the value of CHF(x,y) along the line y=x, then place those values in the new joint CHF(x,y,z) along the line x=y=-z. 
 
 Note that if we start with a joint chf with non-1st generation parents, then we work as if the parents were mutually independent with the sum, since we are already conditioning on the 1st generation parents.
 

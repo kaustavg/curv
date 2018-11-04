@@ -47,6 +47,12 @@ Curv would also be useful for distributions with high kurtosis, where discrete s
 Creating a Bayesian Network
 ---------------------------
 
+Consider the following: A and B are both primitive RVs. Then define:
+C = A + B
+Since A and B are primitives and therefore independent, C's pdf is the convolution of A and B's pdfs. Now consider the following:
+D = A + C
+This is not a straightforward convolution of the pdfs, since C is not  independent with A. Instead, this is a projection of the joint pdf  perpendicular to the y=x line. Since we are internally storing the  characteristic functions, this projection is equivalent to slicing the joint cfun along the line y=x and scaling the result (by central-slice theorm).
+
 Performing Inference
 --------------------
 
@@ -61,6 +67,14 @@ Characteristic Functions
 
 Joint Probability Characteristic Functions
 ------------------------------------------
+
+Arithmetic Operations on Joint Characteristic Functions
+-------------------------------------------------------
+The addition of two chfs in a joint distribution can be accomplished without integration using central slice theorm. The result of a sum of two RVs in a joint chf will be a slice of the joint chf of the parents. 
+
+When forming the new joint chf, the slice will be placed along the new dimension in the negative direction. For example, if Z = X + Y then we first obtain the value of CHF(x,y) along the line y=x, then place those values in the new joint CHF(x,y,z) along the line x=y=-z. 
+
+Note that if we start with a joint chf with non-1st generation parents, then we work as if the parents were mutually independent with the sum, since we are already conditioning on the 1st generation parents.
 
 Computing and Plotting Results
 ------------------------------

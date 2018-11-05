@@ -16,12 +16,12 @@ function V
 ## ARITHMETIC OPERATIONS
 function addCrvNum
 function addCrvCrv
-function negCrv
-function subCrvCrv
+function subNumCrv #Note: add & mul are sufficient, but this is cleaner
+function subCrvCrv #Note: add & mul are sufficient, but this is cleaner
 function mulCrvNum
 function mulCrvCrv
-function divCrvNum
-function divCrvCrv
+function divNumCrv #Note: mul & pow are sufficient, but this is cleaner
+function divCrvCrv #Note: mul & pow are sufficient, but this is cleaner
 function powCrvNum
 
 """
@@ -79,7 +79,7 @@ class CRV(RV):
 		RV.__init__(self,name,'continuous',parents,netInd)
 
 	def __add__(self,other):
-		""" Addition of a CRV to a number or another CRV."""
+		"""Addition of a CRV to a number or another CRV."""
 		if isinstance(other,numTypes):
 			return addCrvNum(self,other,str(self)+'+'+str(other))
 		elif isinstance(other,CRV):
@@ -87,15 +87,15 @@ class CRV(RV):
 		else:
 			return TypeError
 	__radd__ = __add__
+
 	def __neg__(self):
-		""" Additive inverse of a CRV."""
+		"""Additive inverse of a CRV. Use subtraction when possible."""
 		if isinstance(self,CRV):
-			#return negCrv(self,'-'+str(self))
 			return mulCrvNum(self,-1,'-'+str(self))
 		else:
 			return TypeError
 	def __sub__(self,other):
-		""" Subtraction of a number or CRV from a CRV."""
+		"""Subtraction of a number or CRV from a CRV."""
 		if isinstance(other,numTypes):
 			return addCrvNum(self,-other,str(self)+'-'+str(other))
 		elif isinstance(other,CRV):
@@ -104,11 +104,10 @@ class CRV(RV):
 			return TypeError
 	def __rsub__(self,other):
 		# Trying to evaluate other - self where other is a numType
-		return addCrvNum(
-			negCrv(self,'-'+str(self)),other,
-			str(other)+'-'+str(self))
+		return subNumCrv(other,self,str(other)+'-'+str(self))
+
 	def __mul__(self,other):
-		""" Multiplication of a CRV to a number or a CRV."""
+		"""Multiplication of a CRV to a number or a CRV."""
 		if isinstance(other,numTypes):
 			return mulCrvNum(self,other,str(other)+'*'+str(self))
 		elif isinstance(other,CRV):
@@ -116,8 +115,9 @@ class CRV(RV):
 		else:
 			return TypeError
 	__rmul__ = __mul__
+
 	def __truediv__(self,other):
-		""" Division of a CRV by a number or a CRV."""
+		"""Division of a CRV by a number or a CRV."""
 		if isinstance(other,numTypes):
 			return mulCrvNum(self,1/other,str(self)+'/'+str(other))
 		elif isinstance(other,CRV):
@@ -127,15 +127,26 @@ class CRV(RV):
 	def __rtruediv__(self,other):
 		# Trying to evaluate other / self where other is a numType
 		return divNumCrv(other,self,str(other)+'/'+str(self))
+	__floordiv__ = __truediv__
+	__rfloordiv__ = __rtruediv__
+
+	def __pow__(self,other):
+		"""Power of a CRV to a number or a CRV."""
+		if isinstance(other,numTypes):
+			return powCrvNum(self,other,str(self)+'**'+str(other))
+		elif isinstance(other,CRV):
+			return NotImplemented
+		else:
+			return TypeError
 
 	def marginalCHF(self):
-		""" Return the marginal CHF of the RV by slicing the Net."""
+		"""Return the marginal CHF of the RV by slicing the Net."""
 		n = RV.netList[self.netInd]
 		return lambda t: n.joint(
 			[t if i==self.memInd else 0 for i in range(n.numNodes)])
 
 	def moment(self,order=1,tol=1e-3):
-		""" Return the nth moment of the CRV. """
+		"""Return the nth moment of the CRV."""
 		# Compute the nth derivative at t=0 to determine the nth moment
 		# Set tolerance of derivative to 1e-3 to prevent rounding errors
 		marginal = self.marginalCHF()
@@ -225,16 +236,16 @@ def addCrvCrv(X,Y,name):
 	# Return the CRV of the sum
 	return Z
 
-def negCrv(X,name):
+def subNumCrv(a,X,name):
 	"""
-	Return the additive inverse of a CRV and join result to the Net of the CRV.
+	Subtract a CRV from a number and join result to the Net of the CRV.
 
 	Parameters:
-		X (CRV): CRV to be negated
-		name (str): Name of the negative
-
+		a (int,float,complex): Number to be subtracted from
+		X (CRV): CRV to be subtracted
+		name (str): Name of the difference
 	Returns:
-		CRV: A CRV representing the negative, stored in the same Net as X
+		CRV: A CRV representing the difference, stored in the same Net as X
 	"""
 
 	# Create the new RV
@@ -250,10 +261,10 @@ def negCrv(X,name):
 			if (i == X.memInd) else 
 			newArgs[i] 
 			for i in range(n.numNodes-1)]
-		return oldJoint(oldArgs)
+		return np.exp(1j*newArgs[Z.memInd]*a)*oldJoint(oldArgs)
 	# Update the joint
 	n.joint = newJoint
-	# Return the CRV of the negative
+	# Return the CRV of the sum
 	return Z
 
 def subCrvCrv(X,Y,name):
@@ -325,5 +336,14 @@ def mulCrvNum(X,a,name):
 	# Return the CRV of the product
 	return Z
 
-def mulCrvCrv(X,Y):
+def mulCrvCrv(X,Y,name):
+	return NotImplemented
+
+def divNumCrv(a,X,name):
+	return NotImplemented
+
+def divCrvCrv(X,Y,name):
+	return NotImplemented
+
+def powCrvNum(X,a,name):
 	return NotImplemented

@@ -1,18 +1,13 @@
 import curv as cv
 
-# X = cv.Normal(1,2)
-# Z = cv.Uniform(-5,-4) - cv.Uniform(2,3)
-# cv.plotpd(Z,(-10,0))
-# print(str(Z))
-
-
-n = cv.Net()
-A = n.normal(1,2)
-B = n.uniform(3,5)
+A = cv.normal(1,0.1)
+B = cv.uniform(-1,1)
 C = A + B
-cv.plotPD(C)
-cv.plotNet(n)
-print(n.joint)
+cv.plotNet()
+# print(cv.E(A))
+# D = C * A**2
+# cv.plotCHF(C,(-10,10))
+cv.plotPD(C,(-10,10))
 
-
-# To Do now: create joint from result of addition
+# A = cv.Normal(1,1)
+# cv.pdplot(D,-10,10)

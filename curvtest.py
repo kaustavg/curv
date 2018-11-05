@@ -1,10 +1,10 @@
 import curv as cv
 
 A = cv.normal(1,0.1)
-B = cv.uniform(-1,1)
-C = A + B
+B = cv.uniform(0,4)
+C = -B
 cv.plotNet()
-# print(cv.E(A))
+# print(cv.E(C))
 # D = C * A**2
 # cv.plotCHF(C,(-10,10))
 cv.plotPD(C,(-10,10))

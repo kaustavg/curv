@@ -3,19 +3,26 @@ Classes and functions to create, hold, and operate on random variables (continuo
 
 Contents:
 
-## Classes
+## CLASSES
 class RV
 class CRV(RV)
 	method marginalCHF
 	method moment
 
-## Unary Operations
+## BASIC PROBABILITY OPERATIONS
 function E
 function V
 
-## Binary Operations
+## ARITHMETIC OPERATIONS
 function addCrvNum
 function addCrvCrv
+function negCrv
+function subCrvCrv
+function mulCrvNum
+function mulCrvCrv
+function divCrvNum
+function divCrvCrv
+function powCrvNum
 
 """
 
@@ -27,7 +34,7 @@ from .cvnet import *
 numTypes = (int, float, complex)
 
 
-## Classes
+## CLASSES
 class RV:
 	"""
 	Class of random variables that may be placed in a Net. 
@@ -74,22 +81,52 @@ class CRV(RV):
 	def __add__(self,other):
 		""" Addition of a CRV to a number or another CRV."""
 		if isinstance(other,numTypes):
-			return addCrvNum(self,other)
+			return addCrvNum(self,other,str(self)+'+'+str(other))
 		elif isinstance(other,CRV):
-			return addCrvCrv(self,other)
+			return addCrvCrv(self,other,str(self)+'+'+str(other))
 		else:
 			return TypeError
 	__radd__ = __add__
 	def __neg__(self):
-		""" Additive inverse of a CV."""
-		return negCrv(self)
+		""" Additive inverse of a CRV."""
+		if isinstance(self,CRV):
+			#return negCrv(self,'-'+str(self))
+			return mulCrvNum(self,-1,'-'+str(self))
+		else:
+			return TypeError
 	def __sub__(self,other):
-		""" Subtraction of a number or CV from a CV."""
-		return self + (-other)
+		""" Subtraction of a number or CRV from a CRV."""
+		if isinstance(other,numTypes):
+			return addCrvNum(self,-other,str(self)+'-'+str(other))
+		elif isinstance(other,CRV):
+			return subCrvCrv(self,other,str(self)+'-'+str(other))
+		else:
+			return TypeError
 	def __rsub__(self,other):
-		return -self + other
+		# Trying to evaluate other - self where other is a numType
+		return addCrvNum(
+			negCrv(self,'-'+str(self)),other,
+			str(other)+'-'+str(self))
 	def __mul__(self,other):
-		return NotImplemented
+		""" Multiplication of a CRV to a number or a CRV."""
+		if isinstance(other,numTypes):
+			return mulCrvNum(self,other,str(other)+'*'+str(self))
+		elif isinstance(other,CRV):
+			return mulCrvCrv(self,other,str(self)+'*'+str(other))
+		else:
+			return TypeError
+	__rmul__ = __mul__
+	def __truediv__(self,other):
+		""" Division of a CRV by a number or a CRV."""
+		if isinstance(other,numTypes):
+			return mulCrvNum(self,1/other,str(self)+'/'+str(other))
+		elif isinstance(other,CRV):
+			return divCrvCrv(self,other,str(self)+'/'+str(other))
+		else:
+			return TypeError
+	def __rtruediv__(self,other):
+		# Trying to evaluate other / self where other is a numType
+		return divNumCrv(other,self,str(other)+'/'+str(self))
 
 	def marginalCHF(self):
 		""" Return the marginal CHF of the RV by slicing the Net."""
@@ -104,7 +141,7 @@ class CRV(RV):
 		marginal = self.marginalCHF()
 		return (-1j**order) * derivative(marginal,0,tol,order)
 
-## UNARY OPERATIONS
+## BASIC PROBABILITY OPERATIONS
 def E(X):
 	""" Return the expected value of an RV. """
 	if isinstance(X,RV):
@@ -119,28 +156,31 @@ def V(X):
 	else:
 		return 0
 
-## BINARY OPERATIONS
-def addCrvNum(X,a):
+## ARITHMETIC OPERATIONS
+def addCrvNum(X,a,name):
 	"""
 	Add a CRV to a number and join result to the Net of the CRV.
 
 	Parameters:
 		X (CRV): CRV to be added
 		a (int,float,complex): Number to be added
+		name (str): Name of the sum
 
 	Returns:
 		CRV: A CRV representing the sum, stored in the same Net as X
 	"""
 	# Create the new RV
-	Z = CRV(str(X)+'+'+str(a),[X],X.netInd)
+	Z = CRV(name,[X],X.netInd)
 	# Read the current net
 	n = RV.netList[Z.netInd]
 	# Copy
 	oldJoint = n.joint
 	# Use the formula derived in the README to compute new joint
 	def newJoint(newArgs):
-		oldArgs = [newArgs[X.memInd]+newArgs[Z.memInd] 
-			if (i == X.memInd) else newArgs[i] 
+		oldArgs = [
+			newArgs[X.memInd]+newArgs[Z.memInd] 
+			if (i == X.memInd) else 
+			newArgs[i] 
 			for i in range(n.numNodes-1)]
 		return np.exp(1j*newArgs[Z.memInd]*a)*oldJoint(oldArgs)
 	# Update the joint
@@ -148,26 +188,24 @@ def addCrvNum(X,a):
 	# Return the CRV of the sum
 	return Z
 
-def addCrvCrv(X,Y):
+def addCrvCrv(X,Y,name):
 	"""
 	Add a CRV to a CRV and join result to the net of the CRVs.
 
 	Parameters:
 		X (CRV): First CRV to be added
 		Y (CRV): Second CRV to be added
+		name (str): Name of the sum
 
 	Returns:
 		CRV: A CRV representing the sum, stored in the same Net as X, Y
 	"""
 
-	# See docs for more information.
-	# In implementation, we first create the new RV then update the joint chf of the net.
-
 	# First make sure both RVs exist on the same net.
 	assert (X.netInd == Y.netInd),\
 		"During an addition, both RVs must belong to the same net."
 	# Create the new RV
-	Z = CRV(str(X)+'+'+str(Y), [X,Y], X.netInd)
+	Z = CRV(name, [X,Y], X.netInd)
 	# Read the current Net
 	n = RV.netList[Z.netInd]
 	# Copy
@@ -187,3 +225,105 @@ def addCrvCrv(X,Y):
 	# Return the CRV of the sum
 	return Z
 
+def negCrv(X,name):
+	"""
+	Return the additive inverse of a CRV and join result to the Net of the CRV.
+
+	Parameters:
+		X (CRV): CRV to be negated
+		name (str): Name of the negative
+
+	Returns:
+		CRV: A CRV representing the negative, stored in the same Net as X
+	"""
+
+	# Create the new RV
+	Z = CRV(name,[X],X.netInd)
+	# Read the current net
+	n = RV.netList[Z.netInd]
+	# Copy
+	oldJoint = n.joint
+	# Use the formula derived in the README to compute new joint
+	def newJoint(newArgs):
+		oldArgs = [
+			newArgs[X.memInd]-newArgs[Z.memInd] 
+			if (i == X.memInd) else 
+			newArgs[i] 
+			for i in range(n.numNodes-1)]
+		return oldJoint(oldArgs)
+	# Update the joint
+	n.joint = newJoint
+	# Return the CRV of the negative
+	return Z
+
+def subCrvCrv(X,Y,name):
+	"""
+	Subtract a CRV from a CRV and join result to the net of the CRVs.
+
+	Parameters:
+		X (CRV): First CRV to be subtracted from
+		Y (CRV): Second CRV to be subtracted
+		name (str): Name of the difference
+
+	Returns:
+		CRV: A CRV representing the difference, stored in the same Net as X, Y
+	"""
+
+	# First make sure both RVs exist on the same net.
+	assert (X.netInd == Y.netInd),\
+		"During a subtraction, both RVs must belong to the same net."
+	# Create the new RV
+	Z = CRV(name, [X,Y], X.netInd)
+	# Read the current Net
+	n = RV.netList[Z.netInd]
+	# Copy
+	oldJoint = n.joint
+	# Use the formula derived in the README to compute new joint
+	# For subtraction, 
+	def newJoint(newArgs):
+		oldArgs = [
+			newArgs[X.memInd]-newArgs[Z.memInd] 
+			if (i==X.memInd) else
+			newArgs[Y.memInd]+newArgs[Z.memInd]
+			if (i==Y.memInd) else
+			newArgs[i]
+			for i in range(n.numNodes-1)]
+		return oldJoint(oldArgs)
+	# Update the joint
+	n.joint = newJoint
+	# Return the CRV of the difference
+	return Z
+
+def mulCrvNum(X,a,name):
+	"""
+	Multiply a CRV to a number and join result to the Net of the CRV.
+
+	Parameters:
+		X (CRV): CRV to be multiplied
+		a (int,float,complex): Number to be multiplied
+		name (str): Name of the product
+
+	Returns:
+		CRV: A CRV representing the product, stored in the same Net as X
+	"""
+	# Create the new RV
+	Z = CRV(name,[X],X.netInd)
+	# Read the current net
+	n = RV.netList[Z.netInd]
+	# Copy
+	oldJoint = n.joint
+	# Use the formula derived in the README to compute new joint
+	def newJoint(newArgs):
+		oldArgs = [
+			newArgs[X.memInd]+a*newArgs[Z.memInd] 
+			if (i == X.memInd) else 
+			newArgs[i] 
+			for i in range(n.numNodes-1)]
+		return oldJoint(oldArgs)
+	# Update the joint
+	n.joint = newJoint
+	# Return the CRV of the product
+	return Z
+
+def mulCrvCrv(X,Y):
+	return NotImplemented

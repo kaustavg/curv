@@ -85,7 +85,7 @@ def plotNet(netInd=0):
 	topSorted = n.topSort()
 	num = len(topSorted)
 	# Create canvas
-	canvas = [[' ' for i in range(j+1)] for j in range(num*2+1)]
+	canvas = [[' ' for i in range(j+1)] for j in range(num*2-1)]
 	# Add labels
 	for i in range(num):
 		canvas[i*2] += str(topSorted[i])

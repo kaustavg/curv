@@ -105,6 +105,26 @@ This is a direct result of the central slice theorm.
 
 Note that if we start with a joint chf with non-1st generation parents, then we work as if the parents were mutually independent with the sum, since we are already conditioning on the 1st generation parents.
 
+For the subtraction of two random variables :math:`Z = X - Y`, we may similarly derive the expression 
+math::
+    \phi_{X,Y,Z}(t_x,t_y,t_z) = \phi_{X,Y}(t_x-t_z,t_y+t_z)
+
+Multiplication of a Constant to a Random Variable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Our problem is to find the joint CHF :math:`\phi_{X,Y}(t_x,t_y)` as a function of :math:`\phi_X(t_x)` given :math:`Y = a X` where :math:`a` is a constant.
+
+In terms of PDFs, if :math:`Y = aX` then the joint PDF is given by 
+math::
+    f_{X,Y}(x,y) = f_X(x)\delta(y-ax)
+Taking the Fourier transform we have
+math::
+    \phi_{X,Y}(t_x,t_y) = \iint f_X(x)\delta(y-ax)e^{-i(t_x x+t_y y)} \,dx\,dy
+Solving the double integral, we obtain
+math::
+    \phi_{X,Y}(t_x,t_y) = \phi_X(t_x + a t_y)
+
+
 Computing and Plotting Results
 ------------------------------
 

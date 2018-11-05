@@ -188,11 +188,8 @@ def addCrvNum(X,a,name):
 	oldJoint = n.joint
 	# Use the formula derived in the README to compute new joint
 	def newJoint(newArgs):
-		oldArgs = [
-			newArgs[X.memInd]+newArgs[Z.memInd] 
-			if (i == X.memInd) else 
-			newArgs[i] 
-			for i in range(n.numNodes-1)]
+		oldArgs = [newArgs[i] for i in range(n.numNodes-1)]
+		oldArgs[X.memInd] += newArgs[Z.memInd]
 		return np.exp(1j*newArgs[Z.memInd]*a)*oldJoint(oldArgs)
 	# Update the joint
 	n.joint = newJoint
@@ -223,13 +220,9 @@ def addCrvCrv(X,Y,name):
 	oldJoint = n.joint
 	# Use the formula derived in the README to compute new joint
 	def newJoint(newArgs):
-		oldArgs = [
-			newArgs[X.memInd]+newArgs[Z.memInd] 
-			if (i==X.memInd) else
-			newArgs[Y.memInd]+newArgs[Z.memInd]
-			if (i==Y.memInd) else
-			newArgs[i]
-			for i in range(n.numNodes-1)]
+		oldArgs = [newArgs[i] for i in range(n.numNodes-1)]
+		oldArgs[X.memInd] += newArgs[Z.memInd]
+		oldArgs[Y.memInd] += newArgs[Z.memInd]
 		return oldJoint(oldArgs)
 	# Update the joint
 	n.joint = newJoint
@@ -256,11 +249,8 @@ def subNumCrv(a,X,name):
 	oldJoint = n.joint
 	# Use the formula derived in the README to compute new joint
 	def newJoint(newArgs):
-		oldArgs = [
-			newArgs[X.memInd]-newArgs[Z.memInd] 
-			if (i == X.memInd) else 
-			newArgs[i] 
-			for i in range(n.numNodes-1)]
+		oldArgs = [newArgs[i] for i in range(n.numNodes-1)]
+		oldArgs[X.memInd] -= newArgs[Z.memInd]
 		return np.exp(1j*newArgs[Z.memInd]*a)*oldJoint(oldArgs)
 	# Update the joint
 	n.joint = newJoint
@@ -292,13 +282,9 @@ def subCrvCrv(X,Y,name):
 	# Use the formula derived in the README to compute new joint
 	# For subtraction, 
 	def newJoint(newArgs):
-		oldArgs = [
-			newArgs[X.memInd]-newArgs[Z.memInd] 
-			if (i==X.memInd) else
-			newArgs[Y.memInd]+newArgs[Z.memInd]
-			if (i==Y.memInd) else
-			newArgs[i]
-			for i in range(n.numNodes-1)]
+		oldArgs = [newArgs[i] for i in range(n.numNodes-1)]
+		oldArgs[X.memInd] += newArgs[Z.memInd]
+		oldArgs[Y.memInd] -= newArgs[Z.memInd]
 		return oldJoint(oldArgs)
 	# Update the joint
 	n.joint = newJoint
@@ -325,11 +311,8 @@ def mulCrvNum(X,a,name):
 	oldJoint = n.joint
 	# Use the formula derived in the README to compute new joint
 	def newJoint(newArgs):
-		oldArgs = [
-			newArgs[X.memInd]+a*newArgs[Z.memInd] 
-			if (i == X.memInd) else 
-			newArgs[i] 
-			for i in range(n.numNodes-1)]
+		oldArgs = [newArgs[i] for i in range(n.numNodes-1)]
+		oldArgs[X.memInd] += a*newArgs[Z.memInd]
 		return oldJoint(oldArgs)
 	# Update the joint
 	n.joint = newJoint

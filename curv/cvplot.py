@@ -24,6 +24,7 @@ def plotPD(X,axLim=(None,None),Npoints=8192,tol=1e-2):
 	k = tol**-0.5
 	mu = E(X)
 	si = V(X)**0.5
+	assert (si!=0),"Variance of RV cannot be 0. Improper distribution."
 	start = mu - k*si/2
 	span = k*si
 	samplet = np.arange(-Npoints/(2*span), Npoints/(2*span), 1/span)

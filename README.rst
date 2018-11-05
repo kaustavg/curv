@@ -107,7 +107,7 @@ Note that if we start with a joint chf with non-1st generation parents, then we 
 
 For the subtraction of two random variables :math:`Z = X - Y`, we may similarly derive the expression 
 math::
-    \phi_{X,Y,Z}(t_x,t_y,t_z) = \phi_{X,Y}(t_x-t_z,t_y+t_z)
+    \phi_{X,Y,Z}(t_x,t_y,t_z) = \phi_{X,Y}(t_x+t_z,t_y-t_z)
 
 Multiplication of a Constant to a Random Variable
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

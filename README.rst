@@ -14,14 +14,13 @@ Typical usage often looks like this::
 
     import curv as cv
 
-    A = cv.Normal(1,2)
-    B = cv.Uniform(-5,4)
+    A = cv.normal(1,2)
+    B = cv.uniform(-5,4)
     C = 4 + A - 2*B
-    D = C * A**2
-    cv.pdplot(D,-10,10)
-    cv.netplot()
-    A = cv.Normal(1,1)
-    cv.pdplot(D,-10,10)
+    # D = C * A**2 # Not implemented
+    cv.plotPDF(D,-10,10)
+    cv.plotNet()
+    cv.plotCHF(D,-10,10)
 
 Installation & Dependencies
 ===========================

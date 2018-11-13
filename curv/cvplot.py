@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from .cvrv import *
 
-def plotPD(X,axLim=(None,None),Npoints=8192,tol=1e-2):
+def plotPDF(X,axLim=(None,None),Npoints=8192,tol=1e-2):
 	""" 
 	Plot the PDF of the given RV.
 	
